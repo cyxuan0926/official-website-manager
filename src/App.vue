@@ -10,8 +10,9 @@ export default {
 }
 </script>
 
-<style>
+<style lang="stylus">
 #app {
-
+  height 100vh
+  width 100%
 }
 </style>
