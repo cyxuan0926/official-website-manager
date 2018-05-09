@@ -64,7 +64,7 @@ export default {
             userName: this.user.userName,
             password: this.user.password
           }).then(response => {
-            console.log(response.data)
+            // console.log(response.data)
             if (response.data.code === 200) {
               sessionStorage['userName'] = response.data.data.userName
               sessionStorage['userId'] = response.data.data._id

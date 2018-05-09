@@ -22,7 +22,7 @@
             </i-form>
           </div>
           <div class="edit__action footer">
-            <i-button type="primary" @click="handleEdit">确 认</i-button>
+            <i-button type="primary" @click="handleEdit" :loading="loading">确 认</i-button>
             <i-button @click="handleBack">返 回</i-button>
           </div>
         </div>
@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
 import axios from 'axios'
 export default {
   data () {
@@ -43,22 +42,26 @@ export default {
       rules: {
         title: [{required: true, message: '请填写导航标题', trigger: 'blur'}],
         url: [{required: true, message: '请填写导航地址', trigger: 'blur'}]
-      }
+      },
+      loading: false
     }
   },
-  computed: {
-    ...mapState({
-      navigationObj: state => state.navigation.navigationObj
-    })
-  },
   mounted () {
-    Object.assign(this.navigation, this.navigationObj)
+    let id = this.$route.params.id
+    axios.get(`navigation/${id}/edit`).then(response => {
+      if (response.data.code === 200) {
+        Object.assign(this.navigation, response.data.data)
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   },
   methods: {
     handleBack () {
       this.$router.push({path: '/main/navigation/list'})
     },
     handleEdit () {
+      this.loading = true
       let id = this.$route.params.id
       this.$refs['form'].validate(valid => {
         if (valid) {
@@ -66,15 +69,17 @@ export default {
             title: this.navigation.title,
             url: this.navigation.url
           }).then(response => {
-            console.log(response.data)
+            // console.log(response.data)
             if (response.data.code === 200) {
               this.$refs['form'].resetFields()
+              this.loading = false
               this.$Message.success({
                 content: response.data.msg,
                 duration: 5,
                 closable: true
               })
             } else {
+              this.loading = false
               this.$Message.error({
                 content: response.data.msg,
                 duration: 5,
@@ -82,10 +87,12 @@ export default {
               })
             }
           }).catch(err => {
+            this.loading = false
             console.log(err)
           })
         } else {
           console.log('bad submit')
+          this.loading = false
           return false
         }
       })

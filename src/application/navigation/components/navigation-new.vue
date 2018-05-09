@@ -22,8 +22,8 @@
             </i-form>
           </div>
           <div class="edit__action footer">
-            <i-button type="primary" @click="handleNew">新 增</i-button>
-            <i-button type="default">取 消</i-button>
+            <i-button type="primary" @click="handleNew" :loading="loading">新 增</i-button>
+            <i-button type="default" @click="handleCancel">取 消</i-button>
           </div>
         </div>
       </i-card>
@@ -42,11 +42,13 @@ export default {
       rules: {
         title: [{required: true, message: '请填写导航栏标题', trigger: 'blur'}],
         url: [{required: true, message: '请填写导航栏地址', trigger: 'blur'}]
-      }
+      },
+      loading: false
     }
   },
   methods: {
     handleNew () {
+      this.loading = true
       this.$refs['form'].validate(valid => {
         if (valid) {
           axios.post('navigation', {
@@ -55,12 +57,14 @@ export default {
           }).then(response => {
             if (response.data.code === 200) {
               this.$refs['form'].resetFields()
+              this.loading = false
               this.$Message.success({
                 content: response.data.msg,
                 duration: 5,
                 closable: true
               })
             } else {
+              this.loading = false
               this.$Message.error({
                 content: response.data.msg,
                 duration: 5,
@@ -68,13 +72,18 @@ export default {
               })
             }
           }).catch(err => {
+            this.loading = false
             console.log(err)
           })
         } else {
           console.log('bad submit')
+          this.loading = false
           return false
         }
       })
+    },
+    handleCancel () {
+      this.$refs['form'].resetFields()
     }
   }
 }

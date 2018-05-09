@@ -85,7 +85,7 @@ export default {
         imgUrl: ''
       },
       rules: {
-        imgUrl: [{required: true, message: '图片地址不能为空', trigger: 'change'}],
+        imgUrl: [{required: true, message: '图片不能为空', trigger: 'change'}],
         title: [{required: true, message: '标题不能为空', trigger: 'blur'}],
         url: [{required: true, message: '标题地址不能为空', trigger: 'blur'}]
       },
@@ -106,7 +106,6 @@ export default {
             url: this.banner.url,
             imgUrl: this.banner.imgUrl
           }).then(response => {
-            console.log(response.data)
             if (response.data.code === 200) {
               this.$refs['form'].resetFields()
               const fileList = this.$refs.upload.fileList
@@ -117,8 +116,16 @@ export default {
                 duration: 5,
                 closable: true
               })
+            } else {
+              this.loading = false
+              this.$Message.error({
+                content: response.data.msg,
+                duration: 5,
+                closable: true
+              })
             }
           }).catch(err => {
+            this.loading = false
             console.log(err)
           })
         } else {
@@ -132,12 +139,8 @@ export default {
       this.$refs['form'].resetFields()
       const fileList = this.$refs.upload.fileList
       this.$refs.upload.fileList.splice(fileList.indexOf(this.uploadList[0]), 1)
-      console.log(3)
-      console.log(this.uploadList)
     },
     handleBeforeUpload () {
-      console.log(1)
-      console.log(this.uploadList)
       const check = this.uploadList.length < 1
       if (!check) {
         this.$Notice.warning({
@@ -151,13 +154,11 @@ export default {
       this.visible = true
     },
     handleRemove (file) {
-      console.log(file)
       const fileList = this.$refs.upload.fileList
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+      this.banner.imgUrl = ''
     },
     handleSuccess (res, file) {
-      console.log(2)
-      console.log(this.uploadList)
       console.log(res)
       if (res.code === 200) {
         file.url = res.data.path

@@ -8,7 +8,7 @@
           <div class="edit__fields">
             <i-row >
               <i-col :span="6">
-                <i-input placeholder="导航标题" v-model="title" clearable></i-input>
+                <i-input placeholder="导航标题" v-model.trim="title" clearable></i-input>
               </i-col>
               <i-col :span="4" :offset="14">
                 <i-button type="primary" @click="getOrSearchNavigation(1)">搜 索</i-button>
@@ -102,7 +102,7 @@ export default {
                 on: {
                   click: () => {
                     axios.delete(`/navigation/${params.row._id}`).then(response => {
-                      console.log(response.data)
+                      // console.log(response.data)
                       if (response.data.code === 200) {
                         this.getOrSearchNavigation(1)
                         this.$Message.success({
@@ -141,7 +141,7 @@ export default {
           title: this.title
         }
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         if (response.data.code === 200) {
           this.navigationList = response.data.data.navigation
           this.total = response.data.data.total

@@ -1,8 +1,8 @@
 <template>
-    <div class="information-new">
+    <div class="information-edit">
       <i-card class="content-card">
         <div class="content-card__header">
-          <span>新增基本信息</span>
+          <span>修改基本信息</span>
         </div>
         <div class="edit">
           <div class="edit__fields">
@@ -44,8 +44,8 @@
             </i-form>
           </div>
           <div class="edit__action footer">
-            <i-button type="primary" :loading="loading" @click="handleNew">新 增</i-button>
-            <i-button @click="handleCancel">取 消</i-button>
+            <i-button type="primary" :loading="loading" @click="handleEdit">确 认</i-button>
+            <i-button @click="handleBack">返 回</i-button>
           </div>
         </div>
       </i-card>
@@ -97,11 +97,15 @@ export default {
     }
   },
   methods: {
-    handleNew () {
+    handleBack () {
+      this.$router.push({path: '/main/information/list'})
+    },
+    handleEdit () {
       this.loading = true
+      let id = this.$route.params.id
       this.$refs['form'].validate(valid => {
         if (valid) {
-          axios.post('information', {
+          axios.put(`information/${id}`, {
             company: this.information.company,
             shareCode: this.information.shareCode,
             address: this.information.address,
@@ -135,10 +139,17 @@ export default {
           return false
         }
       })
-    },
-    handleCancel () {
-      this.$refs['form'].resetFields()
     }
+  },
+  mounted () {
+    let id = this.$route.params.id
+    axios.get(`information/${id}/edit`).then(response => {
+      if (response.data.code === 200) {
+        Object.assign(this.information, response.data.data)
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   }
 }
 </script>

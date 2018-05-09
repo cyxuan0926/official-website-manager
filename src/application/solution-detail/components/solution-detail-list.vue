@@ -8,10 +8,10 @@
           <div class="edit__fields">
             <i-row>
               <i-col :span="6">
-                <i-input placeholder="软件介绍"></i-input>
+                <i-input placeholder="软件介绍" v-model.trim="introduction" clearable></i-input>
               </i-col>
               <i-col :span="4" :offset="14">
-                <i-button type="primary">搜 索</i-button>
+                <i-button type="primary" @click="getOrSearchSolutionDetailList(1)">搜 索</i-button>
               </i-col>
             </i-row>
             <i-row>
@@ -19,8 +19,8 @@
             </i-row>
             <i-row style="border: 1px solid #e9eaec;border-top: none">
               <div class="edit__page">
-                <span>共有3条记录</span>
-                <i-page :total="100" size="small" show-elevator></i-page>
+                <span>共有{{total}}条记录</span>
+                <i-page :total="total" size="small" show-elevator :current="current"></i-page>
               </div>
             </i-row>
           </div>
@@ -30,30 +30,53 @@
 </template>
 
 <script>
+import axios from 'axios'
+import moment from '@/filter/moment.js'
 export default {
   data () {
     return {
+      total: 0,
+      current: 1,
+      introduction: '',
       solutionDetailList: [],
       solutionDetailColumns: [
         {
           title: '软件介绍',
-          key: 'introduction'
+          key: 'introduction',
+          minWidth: 100,
+          ellipsis: true
         },
         {
           title: '组成部分和应用领域',
-          key: 'constitute'
+          key: 'constitute',
+          minWidth: 100,
+          ellipsis: true
         },
         {
           title: '技术特点',
-          key: 'technology'
+          key: 'technology',
+          minWidth: 100,
+          ellipsis: true
         },
         {
           title: '对应的解决方案',
-          key: 'solutionId'
+          key: 'solutionId',
+          minWidth: 100,
+          ellipsis: true
         },
         {
           title: '解决方案创建时间',
-          key: 'createdAt'
+          key: 'createdAt',
+          minWidth: 100,
+          render: (h, params) => {
+            return h('div', [
+              h('span', {
+                domProps: {
+                  innerHTML: moment(params.row.createdAt)
+                }
+              })
+            ])
+          }
         },
         {
           title: '操作',
@@ -77,10 +100,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    console.log(2)
-                  },
-                  hover: () => {
-                    console.log(1)
+                    this.$router.push({path: `/main/solution-detail/edit/${params.row._id}`})
                   }
                 }
               }, '修改'),
@@ -94,7 +114,24 @@ export default {
                 },
                 on: {
                   click: () => {
-                    console.log(3)
+                    axios.delete(`solution-detail/${params.row._id}`).then(response => {
+                      if (response.data.code === 200) {
+                        this.getOrSearchSolutionDetailList(1)
+                        this.$Message.success({
+                          content: response.data.msg,
+                          duration: 5,
+                          closable: true
+                        })
+                      } else {
+                        this.$Message.error({
+                          content: response.data.msg,
+                          duration: 5,
+                          closable: true
+                        })
+                      }
+                    }).catch(err => {
+                      console.log(err)
+                    })
                   }
                 }
               }, '删除')
@@ -103,6 +140,28 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    getOrSearchSolutionDetailList (pages) {
+      this.current = pages
+      axios.get('solution-detail', {
+        params: {
+          page: pages,
+          rows: 10,
+          introduction: this.introduction
+        }
+      }).then(response => {
+        if (response.data.code === 200) {
+          this.solutionDetailList = response.data.data.solutionDetail
+          this.total = response.data.data.total
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  },
+  mounted () {
+    this.getOrSearchSolutionDetailList(1)
   }
 }
 </script>

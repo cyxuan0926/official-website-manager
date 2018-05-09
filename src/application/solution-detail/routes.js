@@ -15,5 +15,13 @@ export default [
     meta: {
       requireAuth: true
     }
+  },
+  {
+    path: 'solution-detail/edit/:id',
+    component: components.solutionDetailEdit,
+    name: '修改解决方案详情',
+    meta: {
+      requireAuth: true
+    }
   }
 ]

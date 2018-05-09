@@ -15,5 +15,13 @@ export default [
     meta: {
       requireAuth: true
     }
+  },
+  {
+    path: 'information/edit/:id',
+    component: components.informationEdit,
+    name: '修改基本信息',
+    meta: {
+      requireAuth: true
+    }
   }
 ]
