@@ -15,5 +15,13 @@ export default [
     meta: {
       requireAuth: true
     }
+  },
+  {
+    path: 'introduction/edit/:id',
+    component: components.introductionEdit,
+    name: '修改简介',
+    meta: {
+      requireAuth: true
+    }
   }
 ]

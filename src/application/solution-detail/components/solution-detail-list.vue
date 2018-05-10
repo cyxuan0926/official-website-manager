@@ -20,7 +20,7 @@
             <i-row style="border: 1px solid #e9eaec;border-top: none">
               <div class="edit__page">
                 <span>共有{{total}}条记录</span>
-                <i-page :total="total" size="small" show-elevator :current="current"></i-page>
+                <i-page :total="total" size="small" show-elevator :current="current" @on-change="pageChange"></i-page>
               </div>
             </i-row>
           </div>
@@ -41,28 +41,49 @@ export default {
       solutionDetailList: [],
       solutionDetailColumns: [
         {
+          title: '对应的解决方案',
+          key: 'technology',
+          minWidth: 110,
+          ellipsis: true,
+          render: (h, params) => {
+            return h('div', [
+              h('span', {
+                domProps: {
+                  innerHTML: params.row.solutionId.title
+                }
+              })
+            ])
+          }
+        },
+        {
           title: '软件介绍',
           key: 'introduction',
-          minWidth: 100,
+          minWidth: 140,
           ellipsis: true
         },
         {
           title: '组成部分和应用领域',
           key: 'constitute',
-          minWidth: 100,
+          minWidth: 130,
           ellipsis: true
         },
         {
           title: '技术特点',
-          key: 'technology',
-          minWidth: 100,
-          ellipsis: true
-        },
-        {
-          title: '对应的解决方案',
           key: 'solutionId',
-          minWidth: 100,
-          ellipsis: true
+          minWidth: 120,
+          ellipsis: true,
+          render: (h, params) => {
+            return h('div', [
+              h('span', {
+                domProps: {
+                  innerHTML: params.row.technology.join(' / ')
+                },
+                style: {
+                  fontSize: '14px'
+                }
+              })
+            ])
+          }
         },
         {
           title: '解决方案创建时间',
@@ -81,7 +102,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          minWidth: 100,
+          minWidth: 80,
           ellipsis: true,
           render: (h, params) => {
             return h('div', [
@@ -158,6 +179,9 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    pageChange (page) {
+      this.getOrSearchSolutionDetailList(page)
     }
   },
   mounted () {

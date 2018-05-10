@@ -28,15 +28,15 @@
                   </i-form-item>
                 </i-col>
                 <i-col :span="12">
-                  <i-form-item label="组成部分和应用领域" prop="technology">
+                  <i-form-item label="组成部分和应用领域" prop="constitute">
                     <i-input clearable type="textarea" :rows="5" v-model="solutionDetail.constitute"></i-input>
                   </i-form-item>
                 </i-col>
               </i-row>
-              <i-row :gutter="20" v-for="item of number" :key="item">
+              <i-row :gutter="20" v-for="item of solutionDetail.technology.length" :key="item">
                 <i-col :span="12">
-                  <i-form-item :label="item===1 ? '技术特点' : '' " prop="constitute">
-                    <i-input clearable  v-model="solutionDetail.technology[item]"></i-input>
+                  <i-form-item :label="item===1 ? '技术特点' : '' " prop="technology">
+                    <i-input clearable  v-model="solutionDetail.technology[item-1]"></i-input>
                   </i-form-item>
                 </i-col>
                 <i-col :span="1" style="margin-top: 28px" v-show="item === 1">
@@ -45,7 +45,7 @@
                     </span>
                 </i-col>
                 <i-col :span="6" :class="item===1 ? 'first-minus__col' : 'other-minus__col'" v-show="item !== 1">
-                  <span @click="handleMinus">
+                  <span @click="handleMinus(item)">
                       <i-icon type="minus-circled" size="22"></i-icon>
                     </span>
                 </i-col>
@@ -53,8 +53,8 @@
             </i-form>
           </div>
           <div class="edit__action footer">
-            <i-button type="primary">新 增</i-button>
-            <i-button >取 消</i-button>
+            <i-button type="primary" @click="handleNew" :loading="loading">新 增</i-button>
+            <i-button @click="handleCancel">取 消</i-button>
           </div>
         </div>
       </i-card>
@@ -70,7 +70,7 @@ export default {
         name: '',
         introduction: '',
         constitute: '',
-        technology: [],
+        technology: [''],
         solutionId: ''
       },
       rules: {
@@ -79,7 +79,7 @@ export default {
         solutionId: [{required: true, message: '请选择解决方案 ', trigger: 'change'}]
       },
       solutionList: [],
-      number: 1
+      loading: false
     }
   },
   mounted () {
@@ -87,7 +87,9 @@ export default {
       if (response.data.code === 200) {
         for (let val of response.data.data) {
           for (let index in val) {
-            this.solutionList.push(val[index])
+            if (!val[index].solutionDetailId) {
+              this.solutionList.push(val[index])
+            }
           }
         }
       }
@@ -98,21 +100,61 @@ export default {
   watch: {
     'solutionDetail.technology': {
       handler (newVal, oldVal) {
-        console.log(newVal, oldVal)
+        // console.log(newVal)
       },
       deep: true
     }
   },
   methods: {
     handleAdd () {
-      this.number++
+      this.solutionDetail.technology.push('')
     },
-    handleMinus () {
-      if (this.number === 1) {
-        return true
-      } else {
-        this.number--
-      }
+    handleMinus (index) {
+      this.solutionDetail.technology.splice(index - 1, 1)
+    },
+    handleCancel () {
+      this.$refs['form'].resetFields()
+      this.solutionDetail.technology = ['']
+    },
+    handleNew () {
+      this.loading = true
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          this.loading = false
+          console.log(this.solutionDetail.technology.join())
+          axios.post('solution-detail', {
+            name: this.solutionDetail.name,
+            introduction: this.solutionDetail.introduction,
+            constitute: this.solutionDetail.constitute,
+            technology: this.solutionDetail.technology.join(),
+            solutionId: this.solutionDetail.solutionId
+          }).then(response => {
+            this.loading = false
+            if (response.data.code === 200) {
+              this.$refs['form'].resetFields()
+              this.solutionDetail.technology = ['']
+              this.$Message.success({
+                content: response.data.msg,
+                duration: 5,
+                closable: true
+              })
+            } else {
+              this.$Message.error({
+                content: response.data.msg,
+                duration: 5,
+                closable: true
+              })
+            }
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
+          })
+        } else {
+          console.log('bad submit')
+          this.loading = false
+          return false
+        }
+      })
     }
   }
 }

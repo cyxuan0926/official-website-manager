@@ -27,7 +27,7 @@
                       <template v-if="item.status === 'finished'">
                         <img :src="banner.imgUrl">
                         <div class="demo-upload-list-cover">
-                          <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
+                          <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                           <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
                         </div>
                       </template>
@@ -52,7 +52,7 @@
                       </div>
                     </Upload>
                     <Modal title="View Image" v-model="visible">
-                      <img :src="uploadList[0].url" v-if="visible" style="width: 100%">
+                      <img :src="imgUrl" v-if="visible" style="width: 100%">
                     </Modal>
                   </i-form-item>
                 </i-col>
@@ -90,7 +90,7 @@ export default {
         url: [{required: true, message: '标题地址不能为空', trigger: 'blur'}]
       },
       loading: false,
-      imgName: '',
+      imgUrl: '',
       visible: false,
       uploadList: []
     }
@@ -106,18 +106,17 @@ export default {
             url: this.banner.url,
             imgUrl: this.banner.imgUrl
           }).then(response => {
+            this.loading = false
             if (response.data.code === 200) {
               this.$refs['form'].resetFields()
               const fileList = this.$refs.upload.fileList
               this.$refs.upload.fileList.splice(fileList.indexOf(this.uploadList[0]), 1)
-              this.loading = false
               this.$Message.success({
-                content: '新增标题栏成功',
+                content: response.data.msg,
                 duration: 5,
                 closable: true
               })
             } else {
-              this.loading = false
               this.$Message.error({
                 content: response.data.msg,
                 duration: 5,
@@ -149,8 +148,8 @@ export default {
       }
       return check
     },
-    handleView (name) {
-      this.imgName = name
+    handleView (url) {
+      this.imgUrl = url
       this.visible = true
     },
     handleRemove (file) {
