@@ -24,8 +24,8 @@
               <i-row :gutter="20">
                 <i-col :span="12" :offset="6">
                   <i-form-item label="公司简介图片" class="i-form-item__must" prop="images">
+                    <i-input v-model="introduction.images.length" v-show="false"></i-input>
                     <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index" >
-                      <i-input  v-show="false" v-model="introduction.images[index]"></i-input>
                       <template v-if="item.status === 'finished'">
                         <img :src="item.url">
                         <div class="demo-upload-list-cover">
@@ -63,7 +63,7 @@
             </i-form>
           </div>
           <div class="edit__action footer">
-            <i-button type="primary">新 增</i-button>
+            <i-button type="primary" @click="handleNew" :loading="loading">新 增</i-button>
             <i-button @click="handleCancel">取 消</i-button>
           </div>
         </div>
@@ -72,10 +72,10 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data () {
     const checkImages = (rule, value, callback) => {
-      console.log(value)
       if (value.length === 0) {
         return callback(new Error('请至少上传一张图片'))
       } else {
@@ -89,13 +89,15 @@ export default {
       introduction: {
         title: '',
         content: '',
-        images: [{}]
+        images: []
+        // imgCopy: []
       },
       rules: {
         title: [{required: true, message: '请填写公司简介标题', trigger: 'blur'}],
         content: [{required: true, message: '请填写公司简介标题', trigger: 'blur'}],
         images: [{validator: checkImages, trigger: 'change'}]
-      }
+      },
+      loading: false
     }
   },
   mounted () {
@@ -118,6 +120,8 @@ export default {
     handleRemove (file) {
       const fileList = this.$refs.upload.fileList
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+      this.introduction.images.splice(fileList.indexOf(file), 1)
+      // this.introduction.imgCopy.splice(fileList.indexOf(file.url), 1)
     },
     handleSuccess (res, file) {
       if (res.code === 200) {
@@ -128,10 +132,46 @@ export default {
           duration: 5,
           closable: true
         })
+        this.introduction.images.push(res.data)
+        // this.introduction.imgCopy.push(res.data.path)
       }
     },
     handleCancel () {
-      console.log('取消')
+      let n = this.uploadList.length
+      this.$refs['form'].resetFields()
+      for (let i = 0; i < n; i++) {
+        this.$refs.upload.fileList.splice(this.introduction.images[i], 1)
+      }
+      this.introduction.images = []
+    },
+    handleNew () {
+      this.loading = true
+      let n = this.uploadList.length
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          axios.post('introduction', {
+            title: this.introduction.title,
+            content: this.introduction.content,
+            images: this.introduction.images
+          }).then(response => {
+            this.loading = false
+            if (response.data.code === 200) {
+              this.$refs['form'].resetFields()
+              for (let i = 0; i < n; i++) {
+                this.$refs.upload.fileList.splice(this.introduction.images[i], 1)
+              }
+              this.introduction.images = []
+            }
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
+          })
+        } else {
+          console.log('bad submit')
+          this.loading = false
+          return false
+        }
+      })
     }
   }
 }

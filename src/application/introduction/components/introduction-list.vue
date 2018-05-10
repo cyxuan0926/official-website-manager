@@ -8,10 +8,10 @@
           <div class="edit__fields">
             <i-row>
               <i-col :span="6">
-                <i-input placeholder="标题栏标题" v-model.trim="title"></i-input>
+                <i-input placeholder="公司简介标题" v-model.trim="title" clearable></i-input>
               </i-col>
               <i-col :span="4" :offset="14">
-                <i-button type="primary">搜 索</i-button>
+                <i-button type="primary" @click="getOrSearchIntroductionList(1)">搜 索</i-button>
               </i-col>
             </i-row>
             <i-row>
@@ -42,25 +42,42 @@ export default {
         {
           title: '公司简介标题',
           key: 'title',
-          minWidth: 100,
+          minWidth: 120,
           ellipsis: true
         },
         {
           title: '公司简介内容',
           key: 'content',
-          minWidth: 180,
+          minWidth: 210,
           ellipsis: true
         },
         {
           title: '公司简介图片',
           key: 'images',
-          minWidth: 180,
-          ellipsis: true
+          minWidth: 235,
+          render: (h, params) => {
+            return h('div', {
+              style: {
+                textAlign: 'center'
+              }
+            }, Array.from({length: params.row.images.length}).map(function (currentValue, index) {
+              return h('img', {
+                attrs: {
+                  src: params.row.images[index].path
+                },
+                style: {
+                  width: '80px',
+                  height: '80px',
+                  verticalAlign: 'middle'
+                }
+              })
+            }))
+          }
         },
         {
           title: '简介创建时间',
           key: 'createdAt',
-          minWidth: 100,
+          minWidth: 88,
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -74,7 +91,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          minWidth: 90,
+          minWidth: 40,
           ellipsis: true,
           render: (h, params) => {
             return h('div', [
@@ -82,9 +99,6 @@ export default {
                 props: {
                   type: 'text',
                   size: 'small'
-                },
-                class: {
-
                 },
                 style: {
                   marginRight: '5px',
@@ -155,15 +169,15 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    pageChange (page) {
+      this.getOrSearchIntroductionList(page)
     }
-  },
-  pageChange (page) {
-    this.getOrSearchIntroductionList(page)
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="stylus">
 
 </style>

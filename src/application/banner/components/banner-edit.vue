@@ -110,16 +110,15 @@ export default {
             imgUrl: this.banner.imgUrl,
             description: this.banner.description
           }).then(response => {
+            this.loading = false
             if (response.data.code === 200) {
               this.$refs['form'].resetFields()
-              this.loading = false
               this.$Message.success({
                 content: response.data.msg,
                 duration: 5,
                 closable: true
               })
             } else {
-              this.loading = false
               this.$Message.error({
                 content: response.data.msg,
                 duration: 5,
