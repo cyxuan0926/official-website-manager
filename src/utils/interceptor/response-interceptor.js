@@ -6,6 +6,12 @@ export default {
         if (response.data.code === 400) {
           sessionStorage['userName'] = ''
           sessionStorage['userId'] = ''
+          sessionStorage['activeName'] = ''
+          sessionStorage['menuItemArr'] = JSON.stringify([])
+          sessionStorage['openItem'] = ''
+          store.commit('setActiveName', '')
+          store.commit('setOpenMenu', [])
+          store.commit('setCollapsed', false)
           router.push({path: '/'})
         }
         return response

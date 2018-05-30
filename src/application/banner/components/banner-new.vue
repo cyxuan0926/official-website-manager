@@ -9,12 +9,12 @@
             <i-form label-position="top" :model="banner" :rules="rules" ref="form">
               <i-row :gutter="20">
                 <i-col :span="12" >
-                  <i-form-item label="标题" prop="title" class="i-form-item__must">
+                  <i-form-item label="标题" prop="title">
                     <i-input clearable v-model="banner.title"></i-input>
                   </i-form-item>
                 </i-col>
                 <i-col :span="12">
-                  <i-form-item label="标题地址" prop="url" class="i-form-item__must">
+                  <i-form-item label="标题地址" prop="url">
                     <i-input clearable v-model="banner.url"></i-input>
                   </i-form-item>
                 </i-col>
@@ -45,7 +45,7 @@
                       multiple
                       :with-credentials="true"
                       type="drag"
-                      action="http://120.79.67.25:7001/upload"
+                      action="http://localhost:7001/upload"
                       style="display: inline-block;width:113px;margin-left: 120px" v-show="!(banner.imgUrl)">
                       <div style="width: 113px;height:113px;line-height: 113px;">
                         <Icon type="camera" size="30"></Icon>
@@ -85,9 +85,9 @@ export default {
         imgUrl: ''
       },
       rules: {
-        imgUrl: [{required: true, message: '图片不能为空', trigger: 'change'}],
-        title: [{required: true, message: '标题不能为空', trigger: 'blur'}],
-        url: [{required: true, message: '标题地址不能为空', trigger: 'blur'}]
+        imgUrl: [{required: true, message: '图片不能为空', trigger: 'change'}]
+        // title: [{required: true, message: '标题不能为空', trigger: 'blur'}],
+        // url: [{required: true, message: '标题地址不能为空', trigger: 'blur'}]
       },
       loading: false,
       imgUrl: '',

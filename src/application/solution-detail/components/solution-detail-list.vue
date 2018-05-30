@@ -135,23 +135,33 @@ export default {
                 },
                 on: {
                   click: () => {
-                    axios.delete(`solution-detail/${params.row._id}`).then(response => {
-                      if (response.data.code === 200) {
-                        this.getOrSearchSolutionDetailList(1)
-                        this.$Message.success({
-                          content: response.data.msg,
-                          duration: 5,
-                          closable: true
+                    this.$Modal.confirm({
+                      title: '提示',
+                      content: '<p style="font-size: 14px">此操作将会永久删除该条记录，是否继续？</p>',
+                      closable: true,
+                      onOk: () => {
+                        axios.delete(`solution-detail/${params.row._id}`).then(response => {
+                          if (response.data.code === 200) {
+                            this.getOrSearchSolutionDetailList(1)
+                            this.$Message.success({
+                              content: response.data.msg,
+                              duration: 5,
+                              closable: true
+                            })
+                          } else {
+                            this.$Message.error({
+                              content: response.data.msg,
+                              duration: 5,
+                              closable: true
+                            })
+                          }
+                        }).catch(err => {
+                          console.log(err)
                         })
-                      } else {
-                        this.$Message.error({
-                          content: response.data.msg,
-                          duration: 5,
-                          closable: true
-                        })
+                      },
+                      onCancel: () => {
+                        console.log('取消了')
                       }
-                    }).catch(err => {
-                      console.log(err)
                     })
                   }
                 }
