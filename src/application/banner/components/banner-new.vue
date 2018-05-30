@@ -45,7 +45,7 @@
                       multiple
                       :with-credentials="true"
                       type="drag"
-                      action="http://10.10.10.31:7001/upload"
+                      action="http://120.79.67.25:7001/upload"
                       style="display: inline-block;width:113px;margin-left: 120px" v-show="!(banner.imgUrl)">
                       <div style="width: 113px;height:113px;line-height: 113px;">
                         <Icon type="camera" size="30"></Icon>

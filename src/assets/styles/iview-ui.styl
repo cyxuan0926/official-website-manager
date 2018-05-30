@@ -11,18 +11,18 @@
   &-body
     padding 0
 .ivu-menu-vertical .ivu-menu-submenu-title
-  padding 13px 24px
+  padding 13px 19px
   background #263238
   &:hover
     background #1199de
-.ivu-menu-vertical .ivu-menu-item
-  width 200px
-  padding 13px 24px
+.menu-item .ivu-menu-item
+  width 199px
+  padding 13px 22px
   background #263238
   color #fff
   font-size 12px
   &:hover
-    background #1199de
+    background #222d32
 .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
   border-right none
   color #fff
@@ -43,3 +43,18 @@
   font-size 12px
 .ivu-table-border td:last-child, .ivu-table-border th:last-child
   border-right none
+.menu-item .ivu-menu-submenu-title-icon
+  font-size 14px
+.collapsed-menu .ivu-menu-submenu-title-icon
+  font-size 0px
+  transition font-size .2s ease
+.collapsed-menu .ivu-menu-item
+  height 0px
+  //width 0px
+  overflow hidden
+.collapsed-menu .ivu-menu
+  display none
+  background #222d32
+  overflow hidden
+.ivu-menu-opened .ivu-menu-submenu-title
+  background #1199de

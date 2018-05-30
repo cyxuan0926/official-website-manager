@@ -4,12 +4,12 @@
         <the-header></the-header>
       </Header>
       <Layout>
-        <Sider class="main__sider">
-          <the-siderbar-menu></the-siderbar-menu>
+        <Sider class="main__sider" collapsible v-model="Collapsed" hide-trigger ref="sider" :collapsed-width="66" >
+          <the-siderbar-menu ></the-siderbar-menu>
         </Sider>
         <Layout style="background: #F5F5F5">
           <Content class="main__content">
-            <transition mode="out-in" name="slide-fade">
+            <transition mode="out-in" name="main-router">
               <router-view :key="key"></router-view>
             </transition>
           </Content>
@@ -20,11 +20,13 @@
 </template>
 
 <script>
+import Bus from '@/plugin/bus.js'
 import {components as commomComponents} from './common'
+import {mapMutations} from 'vuex'
 export default {
   data () {
     return {
-      msg: 'hello VueJS'
+      Collapsed: false
     }
   },
   components: {
@@ -34,7 +36,24 @@ export default {
   computed: {
     key () {
       return this.$route.name !== undefined ? this.$route.name + new Date() : this.$route + new Date()
+    },
+    isMain () {
+      if (this.$route.path === '/main' || this.$route.path === '/main/') {
+        return true
+      } else {
+        return false
+      }
     }
+  },
+  mounted () {
+    let self = this
+    Bus.$on('siderClick', () => {
+      self.$refs.sider.toggleCollapse()
+      this.setCollapsed(this.Collapsed)
+    })
+  },
+  methods: {
+    ...mapMutations(['setCollapsed'])
   }
 }
 </script>
@@ -67,11 +86,38 @@ export default {
     padding-left 20px
     height 40px
     line-height 40px
-.slide-fade-enter-active
+.main-router-enter-active
   transition all .8s ease
-.slide-fade-leave-active
+.main-router-leave-active
   transition all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0)
-.slide-fade-enter, .slide-fade-leave-to
+.main-router-enter, .main-router-leave-to
   transform translateX(10px)
   opacity 0
+.cropper-content
+  display flex
+  display -webkit-flex
+  justify-content flex-end
+  -webkit-justify-content flex-end
+.cropper
+  width 350px
+  height 300px
+.show-preview
+  flex 1
+  -webkit-flex 1
+  display flex
+  justify-content center
+.preview
+  overflow hidden
+  border 50%
+  border 1px solid #ccc
+  background #ccc
+  margin-left 40px
+.upload-btn{
+  flex: 1;
+  -webkit-flex: 1;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+  -webkit-justify-content: center;
+}
 </style>

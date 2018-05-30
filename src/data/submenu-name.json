@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/main",
+    "name": "",
+    "index": 0
+  },
+  {
+    "path": "/main/banner",
+    "name": "标题栏",
+    "index": 1
+  },
+  {
+    "path": "/main/navigation",
+    "name": "导航栏",
+    "index": 2
+  },
+  {
+    "path": "/main/solution",
+    "name": "解决方案",
+    "index": 3
+  },
+  {
+    "path": "/main/solution-detail",
+    "name": "解决方案详情",
+    "index": 4
+  },
+  {
+    "path": "/main/introduction",
+    "name": "简介",
+    "index": 5
+  },
+  {
+    "path": "/main/information",
+    "name": "基本信息",
+    "index": 6
+  },
+  {
+    "path":"/main/others",
+    "name":"其余的模块",
+    "index": 7
+  }
+]

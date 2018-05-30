@@ -44,7 +44,7 @@
                       multiple
                       :with-credentials="true"
                       type="drag"
-                      action="http://10.10.10.31:7001/upload"
+                      action="http://120.79.67.25:7001/upload"
                       style="display: inline-block;width:113px" v-show="introduction.images.length !== 3"
                       :class="introduction.images.length===0? '' : 'ivu-upload__img'">
                       <div style="width: 113px;height:113px;line-height: 113px;" >

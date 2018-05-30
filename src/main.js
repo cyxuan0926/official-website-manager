@@ -11,10 +11,12 @@ import axios from 'axios'
 import filters from '@/plugin/filters'
 import requestInterceptor from '@/utils/interceptor/request-interceptor'
 import responseInterceptor from '@/utils/interceptor/response-interceptor'
+import validators from '@/plugin/validator'
 axios.defaults.withCredentials = true
-axios.defaults.baseURL = 'http://10.10.10.31:7001/'
+axios.defaults.baseURL = 'http://120.79.67.25:7001/'
 Vue.use(iView)
 Vue.use(filters)
+Vue.use(validators)
 Vue.config.productionTip = false
 requestInterceptor.config(axios)
 responseInterceptor.config(axios, store, router)

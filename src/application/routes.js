@@ -7,6 +7,7 @@ import {routes as solution} from './solution'
 import {routes as solutionDetail} from './solution-detail'
 import {routes as information} from './information'
 import {routes as introduction} from './introduction'
+import {routes as others} from './others'
 export default [
   {
     path: '/main',
@@ -21,7 +22,8 @@ export default [
       ...solution,
       ...solutionDetail,
       ...information,
-      ...introduction
+      ...introduction,
+      ...others
     ]
   },
   ...user,
