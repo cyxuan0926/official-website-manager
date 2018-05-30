@@ -13,7 +13,8 @@ import requestInterceptor from '@/utils/interceptor/request-interceptor'
 import responseInterceptor from '@/utils/interceptor/response-interceptor'
 import validators from '@/plugin/validator'
 axios.defaults.withCredentials = true
-axios.defaults.baseURL = 'http://120.79.67.25:7001/'
+axios.defaults.baseURL = 'http://localhost:7001/'
+//localhost:7001
 Vue.use(iView)
 Vue.use(filters)
 Vue.use(validators)
