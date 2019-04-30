@@ -10,7 +10,8 @@
               <i-row :gutter="20">
                 <i-col :span="12">
                   <i-form-item label="解决方案" class="i-form-item__must" prop="solutionId">
-                    <i-input disabled v-model="solutionDetail.solutionId.title"></i-input>
+                    <!--<h1>{{solutionDetail.solution.title}}</h1>-->
+                    <i-input disabled v-model="solutionDetail.solution.title"></i-input>
                   </i-form-item>
                 </i-col>
                 <i-col :span="12">
@@ -22,7 +23,8 @@
               <i-row :gutter="20">
                 <i-col :span="12">
                   <i-form-item label="软件介绍" class="i-form-item__must" prop="introduction">
-                    <i-input clearable type="textarea" :rows="5" v-model="solutionDetail.introduction"></i-input>
+                    <m-gk-editor tools="allTools" @editorChange="tinymceChange" :value="forValue"></m-gk-editor>
+                    <i-input clearable type="textarea" :rows="5" v-model="solutionDetail.introduction" v-show="false"></i-input>
                   </i-form-item>
                 </i-col>
                 <i-col :span="12">
@@ -69,13 +71,17 @@ export default {
         introduction: '',
         constitute: '',
         solutionId: '',
+        solution: {
+          title: ''
+        },
         technology: ['']
       },
       rules: {
         name: [{required: true, message: '请填写软件名称', trigger: 'blur'}],
         introduction: [{required: true, message: '请填写软件介绍 ', trigger: 'blur'}]
       },
-      loading: false
+      loading: false,
+      forValue: ''
     }
   },
   methods: {
@@ -92,12 +98,14 @@ export default {
             introduction: this.solutionDetail.introduction,
             constitute: this.solutionDetail.constitute,
             technology: this.solutionDetail.technology.join(),
-            solutionId: this.solutionDetail.solutionId._id
+            solutionId: this.solutionDetail.solutionId
           }).then(response => {
             this.loading = false
             if (response.data.code === 200) {
               this.$refs['form'].resetFields()
               this.solutionDetail.technology = ['']
+              this.solutionDetail.solution.title = ''
+              this.forValue = ''
               this.$Message.success({
                 content: response.data.msg,
                 duration: 5,
@@ -126,13 +134,17 @@ export default {
     },
     handleMinus (index) {
       this.solutionDetail.technology.splice(index - 1, 1)
+    },
+    tinymceChange (contents) {
+      this.solutionDetail.introduction = contents
     }
   },
-  mounted () {
+  created () {
     let id = this.$route.params.id
     axios.get(`solution-detail/${id}`).then(response => {
       if (response.data.code === 200) {
         Object.assign(this.solutionDetail, response.data.data)
+        this.forValue = this.solutionDetail.introduction
       }
     }).catch(err => {
       console.log(err)

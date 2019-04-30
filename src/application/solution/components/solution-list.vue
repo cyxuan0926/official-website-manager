@@ -43,18 +43,21 @@ export default {
           title: '解决方案标题',
           key: 'title',
           minWidth: 120,
-          ellipsis: true
+          ellipsis: true,
+          align: 'center'
         },
         {
           title: '解决方案地址',
           key: 'url',
           minWidth: 100,
-          ellipsis: true
+          ellipsis: true,
+          align: 'center'
         },
         {
           title: '图片',
           key: 'imgUrl',
           minWidth: 120,
+          align: 'center',
           render: (h, params) => {
             return h('div', {
               style: {
@@ -78,11 +81,13 @@ export default {
           title: '解决方案描述',
           key: 'description',
           minWidth: 210,
-          ellipsis: true
+          ellipsis: true,
+          align: 'center'
         },
         {
           title: '解决方案创建时间',
           key: 'createdAt',
+          align: 'center',
           minWidth: 120,
           render: (h, params) => {
             return h('div', [
@@ -99,6 +104,7 @@ export default {
           key: 'action',
           minWidth: 100,
           ellipsis: true,
+          align: 'center',
           render: (h, params) => {
             return h('div', [
               h('i-button', {
@@ -155,7 +161,6 @@ export default {
                         })
                       },
                       onCancel: () => {
-                        console.log('取消了')
                       }
                     })
                   }
@@ -178,8 +183,19 @@ export default {
         }
       }).then(response => {
         if (response.data.code === 200) {
+          this.$Message.success({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
           this.solutionList = response.data.data.solution
           this.total = response.data.data.total
+        } else {
+          this.$Message.error({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
         }
       }).catch(err => {
         console.log(err)

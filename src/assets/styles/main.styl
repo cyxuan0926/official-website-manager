@@ -59,3 +59,44 @@
 .ivu-icon-camera {
   line-height: 3.8;
 }
+.ivu-input-disabled::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color:red !important;
+}
+.ivu-input-disabled::-moz-placeholder{   /* Mozilla Firefox 19+ */
+  color:red;
+}
+.ivu-input-disabled:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
+  color:red;
+}
+.ivu-input-disabled:-ms-input-placeholder{  /* Internet Explorer 10-11 */
+  color:red;
+}
+.ivu-modal {
+  top: 8.8% !important;
+}
+.mce-tinymce.mce-container{
+  box-shadow: none;
+  box-sizing: border-box;
+  border-color: #dcdfe6;
+  border-radius: 4px;
+}
+.mce-container .mce-panel{
+  border-color: #dcdfe6;
+}
+.mce-container .mce-top-part::before{
+  box-shadow: none;
+}
+.mce-container .mce-menubar{
+  display: none;
+}
+.mce-btn-group .mce-listbox{
+  border-color: #e2e4e7;
+}
+//.hidden-introduction-content
+//  &:first-child
+//    overflow hidden !important
+//    white-space nowrap !important
+//    text-overflow ellipsis !important
+//    display block !important
+//  img,video,span,p,.hidden-introduction-content:not(:first-child)
+//    display none !important

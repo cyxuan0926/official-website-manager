@@ -43,12 +43,24 @@ export default {
   methods: {
     ...mapMutations(['setOpenMenu']),
     logout () {
-      axios.post('logout').then(response => {
-        if (response.data.code === 200) {
-          sessionStorage['userName'] = ''
-          sessionStorage['userId'] = ''
-          sessionStorage['menuItemArr'] = JSON.stringify([])
-          this.$router.push({path: '/'})
+      this.$Modal.warning({
+        title: '提示',
+        content: '<p style="font-size: 14px">是否退出登录？</p>',
+        closable: true,
+        onOk: () => {
+          axios.post('logout').then(response => {
+            if (response.data.code === 200) {
+              sessionStorage['userName'] = ''
+              sessionStorage['userId'] = ''
+              sessionStorage['menuItemArr'] = JSON.stringify([])
+              this.$router.push({path: '/'})
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        },
+        onCancel: () => {
+          console.log('取消了')
         }
       })
     },

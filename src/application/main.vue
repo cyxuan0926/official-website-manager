@@ -13,7 +13,7 @@
               <router-view :key="key"></router-view>
             </transition>
           </Content>
-          <Footer class="main__footer">Copyright &copy; 2017-2027 国科政信</Footer>
+          <Footer class="main__footer">Copyright &copy; 2017-2027 国科政信科技（北京）股份有限公司</Footer>
         </Layout>
       </Layout>
     </Layout>

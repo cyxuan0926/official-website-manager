@@ -189,8 +189,19 @@ export default {
       }).then(response => {
         // console.log(response.data)
         if (response.data.code === 200) {
+          this.$Message.success({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
           this.bannerList = response.data.data.banner
           this.total = response.data.data.total
+        } else {
+          this.$Message.error({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
         }
       }).catch(err => {
         console.log(err)

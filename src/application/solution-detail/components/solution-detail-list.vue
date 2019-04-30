@@ -45,50 +45,60 @@ export default {
           key: 'technology',
           minWidth: 110,
           ellipsis: true,
+          align: 'center',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
-                domProps: {
-                  innerHTML: params.row.solutionId.title
-                }
-              })
-            ])
+            return h('span', {
+              domProps: {
+                // innerHTML: params.row.name
+                innerHTML: params.row.solution.title
+              }
+            })
           }
         },
         {
           title: '软件介绍',
           key: 'introduction',
           minWidth: 140,
+          align: 'center',
           ellipsis: true
+          // render: (h, params) => {
+          //   return h('', {
+          //     domProps: {
+          //       innerHTML: params.row.introduction
+          //     }
+          //   })
+          // }
         },
         {
           title: '组成部分和应用领域',
           key: 'constitute',
           minWidth: 130,
-          ellipsis: true
+          ellipsis: true,
+          align: 'center'
         },
         {
           title: '技术特点',
           key: 'solutionId',
           minWidth: 120,
           ellipsis: true,
+          align: 'center',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
-                domProps: {
-                  innerHTML: params.row.technology.join(' / ')
-                },
-                style: {
-                  fontSize: '14px'
-                }
-              })
-            ])
+            return h('span', {
+              domProps: {
+                innerHTML: params.row.technology.split(',').join('/')
+                // innerHTML: params.row.technology.join(' / ')
+              },
+              style: {
+                fontSize: '14px'
+              }
+            })
           }
         },
         {
           title: '解决方案创建时间',
           key: 'createdAt',
-          minWidth: 100,
+          minWidth: 103,
+          align: 'center',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -104,6 +114,7 @@ export default {
           key: 'action',
           minWidth: 80,
           ellipsis: true,
+          align: 'center',
           render: (h, params) => {
             return h('div', [
               h('i-button', {
@@ -160,7 +171,6 @@ export default {
                         })
                       },
                       onCancel: () => {
-                        console.log('取消了')
                       }
                     })
                   }
@@ -183,8 +193,19 @@ export default {
         }
       }).then(response => {
         if (response.data.code === 200) {
+          this.$Message.success({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
           this.solutionDetailList = response.data.data.solutionDetail
           this.total = response.data.data.total
+        } else {
+          this.$Message.error({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
         }
       }).catch(err => {
         console.log(err)
@@ -201,6 +222,5 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
+<style scoped lang="stylus">
 </style>

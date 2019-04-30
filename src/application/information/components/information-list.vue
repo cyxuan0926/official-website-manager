@@ -142,7 +142,6 @@ export default {
                         })
                       },
                       onCancel: () => {
-                        console.log('取消了')
                       }
                     })
                   }
@@ -164,8 +163,19 @@ export default {
         }
       }).then(response => {
         if (response.data.code === 200) {
+          this.$Message.success({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
           this.informationList = response.data.data.information
           this.total = response.data.data.total
+        } else {
+          this.$Message.error({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
         }
       }).catch(err => {
         console.log(err)

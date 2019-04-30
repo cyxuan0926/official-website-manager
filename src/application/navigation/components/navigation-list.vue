@@ -127,7 +127,6 @@ export default {
                         })
                       },
                       onCancel: () => {
-                        console.log('取消了')
                       }
                     })
                   }
@@ -151,10 +150,20 @@ export default {
           title: this.title
         }
       }).then(response => {
-        // console.log(response.data)
         if (response.data.code === 200) {
+          this.$Message.success({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
           this.navigationList = response.data.data.navigation
           this.total = response.data.data.total
+        } else {
+          this.$Message.error({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
         }
       }).catch(err => {
         console.log(err)

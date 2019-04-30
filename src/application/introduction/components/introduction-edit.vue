@@ -27,9 +27,9 @@
                     <i-input v-show="false" v-model="introduction.images.length"></i-input>
                     <div class="demo-upload-list" v-for="(item, index) in introduction.images" :key="index" >
                       <template >
-                        <img :src="item.path">
+                        <img :src="item">
                         <div class="demo-upload-list-cover">
-                          <Icon type="ios-eye-outline" @click.native="handleView(item.path)"></Icon>
+                          <Icon type="ios-eye-outline" @click.native="handleView(item)"></Icon>
                           <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
                         </div>
                       </template>
@@ -39,12 +39,11 @@
                       :show-upload-list="false"
                       :on-success="handleSuccess"
                       :format="['jpg','jpeg','png']"
-                      :max-size="2048"
                       :before-upload="handleBeforeUpload"
                       multiple
                       :with-credentials="true"
                       type="drag"
-                      action="http://localhost:7001/upload"
+                      action="http://39.104.114.135:7002/upload"
                       style="display: inline-block;width:113px" v-show="introduction.images.length !== 3"
                       :class="introduction.images.length===0? '' : 'ivu-upload__img'">
                       <div style="width: 113px;height:113px;line-height: 113px;" >
@@ -52,6 +51,9 @@
                       </div>
                     </i-upload>
                     <i-modal title="View Image" v-model="visible">
+                      <div slot="footer">
+                        <Button type="primary" :size="'large'" @click="closeImgView">确定</Button>
+                      </div>
                       <img :src="imgUrl" v-if="visible" style="width: 100%">
                     </i-modal>
                   </i-form-item>
@@ -87,7 +89,7 @@ export default {
       },
       rules: {
         title: [{required: true, message: '请填写公司简介标题', trigger: 'blur'}],
-        content: [{required: true, message: '请填写公司简介标题', trigger: 'blur'}],
+        content: [{required: true, message: '请填写公司简介内容', trigger: 'blur'}],
         images: [{validator: checkImages, trigger: 'change'}]
       },
       imgUrl: '',
@@ -113,9 +115,18 @@ export default {
       this.visible = true
     },
     handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
-      this.introduction.images.splice(fileList.indexOf(file), 1)
+      this.$Modal.confirm({
+        title: '提示',
+        content: '<p style="font-size: 14px">此操作将会删除该图片，是否继续？</p>',
+        closable: true,
+        onOk: () => {
+          const fileList = this.$refs.upload.fileList
+          this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+          this.introduction.images.splice(fileList.indexOf(file), 1)
+        },
+        onCancel: () => {
+        }
+      })
     },
     handleSuccess (res, file) {
       if (res.code === 200) {
@@ -126,7 +137,13 @@ export default {
           duration: 5,
           closable: true
         })
-        this.introduction.images.push(res.data)
+        this.introduction.images.push(res.data.path)
+      } else {
+        this.$Message.error({
+          content: res.msg,
+          duration: 5,
+          closable: true
+        })
       }
     },
     handleEdit () {
@@ -137,7 +154,7 @@ export default {
           axios.put(`introduction/${id}`, {
             title: this.introduction.title,
             content: this.introduction.content,
-            images: this.introduction.images
+            images: this.introduction.images.join()
           }).then(response => {
             this.loading = false
             if (response.data.code === 200) {
@@ -165,6 +182,10 @@ export default {
           return false
         }
       })
+    },
+    closeImgView () {
+      this.visible = false
+      this.$refs.upload.value = null
     }
   },
   mounted () {

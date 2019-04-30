@@ -57,7 +57,7 @@ import axios from 'axios'
 export default {
   data () {
     const checkTel = (rule, value, callback) => {
-      let telReg = /0\d{2,3}-\d{7,8}/
+      let telReg = /0\d{2,3}-\d{7,8}$/
       if (!value) {
         return callback(new Error('请填写公司电话'))
       }

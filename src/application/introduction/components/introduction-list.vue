@@ -60,10 +60,10 @@ export default {
               style: {
                 textAlign: 'center'
               }
-            }, Array.from({length: params.row.images.length}).map(function (currentValue, index) {
+            }, Array.from({length: params.row.images.split(',').length}).map(function (currentValue, index) {
               return h('img', {
                 attrs: {
-                  src: params.row.images[index].path
+                  src: params.row.images.split(',')[index]
                 },
                 style: {
                   width: '80px',
@@ -146,7 +146,6 @@ export default {
                         })
                       },
                       onCancel: () => {
-                        console.log('取消了')
                       }
                     })
                   }
@@ -173,8 +172,19 @@ export default {
         }
       }).then(response => {
         if (response.data.code === 200) {
+          this.$Message.success({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
           this.introductionList = response.data.data.introduction
           this.total = response.data.data.total
+        } else {
+          this.$Message.error({
+            content: response.data.msg,
+            duration: 5,
+            closable: true
+          })
         }
       }).catch(err => {
         console.log(err)

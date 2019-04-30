@@ -9,13 +9,13 @@
             <i-form label-position="top" :model="banner" :rules="rules" ref="form">
               <i-row :gutter="20">
                 <i-col :span="12" >
-                  <i-form-item label="标题" prop="title">
-                    <i-input clearable v-model="banner.title"></i-input>
+                  <i-form-item label="标题" prop="title" >
+                    <i-input clearable v-model="banner.title" disabled placeholder="暂停使用"></i-input>
                   </i-form-item>
                 </i-col>
                 <i-col :span="12">
                   <i-form-item label="标题地址" prop="url">
-                    <i-input clearable v-model="banner.url"></i-input>
+                    <i-input clearable v-model="banner.url" disabled placeholder="暂停使用"></i-input>
                   </i-form-item>
                 </i-col>
               </i-row>
@@ -40,25 +40,31 @@
                       :show-upload-list="false"
                       :on-success="handleSuccess"
                       :format="['jpg','jpeg','png']"
-                      :max-size="2048"
                       :before-upload="handleBeforeUpload"
                       multiple
                       :with-credentials="true"
                       type="drag"
-                      action="http://localhost:7001/upload"
+                      action="http://39.104.114.135:7002/upload"
                       style="display: inline-block;width:113px;margin-left: 120px" v-show="!(banner.imgUrl)">
                       <div style="width: 113px;height:113px;line-height: 113px;">
                         <Icon type="camera" size="30"></Icon>
                       </div>
+                      <div slot="tip" >
+                        文件大小不超过<span style="color: red">5MB</span>
+                        <template>图片宽度大于<span style="color: red">1263px</span></template>
+                      </div>
                     </Upload>
                     <Modal title="View Image" v-model="visible">
+                      <div slot="footer">
+                        <Button type="primary" :size="'large'" @click="closeImgView">确定</Button>
+                      </div>
                       <img :src="imgUrl" v-if="visible" style="width: 100%">
                     </Modal>
                   </i-form-item>
                 </i-col>
                 <i-col :span="12">
                   <i-form-item label="标题描述" prop="description">
-                    <i-input clearable type="textarea" :rows="5" v-model="banner.description"></i-input>
+                    <i-input clearable type="textarea" :rows="5" v-model="banner.description" disabled placeholder="暂停使用"></i-input>
                   </i-form-item>
                 </i-col>
               </i-row>
@@ -139,26 +145,61 @@ export default {
       const fileList = this.$refs.upload.fileList
       this.$refs.upload.fileList.splice(fileList.indexOf(this.uploadList[0]), 1)
     },
-    handleBeforeUpload () {
+    handleBeforeUpload (file) {
+      console.log(file)
+      const size = file.size / 1024 / 1024 < 5
       const check = this.uploadList.length < 1
       if (!check) {
         this.$Notice.warning({
           title: '一次性只能上次一张图片'
         })
+        return false
       }
-      return check
+      if (!size) {
+        this.$Notice.warning({
+          title: '图片大小不能超过1M'
+        })
+        return false
+      }
+      return new Promise((resolve, reject) => {
+        var reader = new FileReader()
+        reader.onload = (e) => {
+          let data = e.target.result
+          let image = new Image()
+          image.onload = () => {
+            if (image.width < 1263) {
+              this.$Notice.warning({
+                title: '图片宽度不能小于1263'
+              })
+              reject(new Error(false))
+            } else {
+              resolve(true)
+            }
+          }
+          image.src = data
+        }
+        reader.readAsDataURL(file)
+      })
     },
     handleView (url) {
       this.imgUrl = url
       this.visible = true
     },
     handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
-      this.banner.imgUrl = ''
+      this.$Modal.confirm({
+        title: '提示',
+        content: '<p style="font-size: 14px">此操作将会删除该图片，是否继续？</p>',
+        closable: true,
+        onOk: () => {
+          const fileList = this.$refs.upload.fileList
+          this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+          this.banner.imgUrl = ''
+        },
+        onCancel: () => {
+        }
+      })
     },
     handleSuccess (res, file) {
-      console.log(res)
       if (res.code === 200) {
         file.url = res.data.path
         file.name = res.data.filename
@@ -168,7 +209,17 @@ export default {
           duration: 5,
           closable: true
         })
+      } else {
+        this.$Message.error({
+          content: res.msg,
+          duration: 5,
+          closable: true
+        })
       }
+    },
+    closeImgView () {
+      this.visible = false
+      this.$refs.upload.value = null
     }
   },
   mounted () {
@@ -178,6 +229,5 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="stylus">
-
+<style scoped >
 </style>

@@ -40,18 +40,20 @@
                       :show-upload-list="false"
                       :on-success="handleSuccess"
                       :format="['jpg','jpeg','png']"
-                      :max-size="2048"
                       :before-upload="handleBeforeUpload"
                       multiple
                       :with-credentials="true"
                       type="drag"
-                      action="http://localhost:7001/upload"
+                      action="http://39.104.114.135:7002/upload"
                       style="display: inline-block;width:113px;margin-left: 120px" v-show="!(solution.imgUrl)">
                       <div style="width: 113px;height:113px;line-height: 113px;">
                         <Icon type="camera" size="30"></Icon>
                       </div>
                     </Upload>
                     <Modal title="View Image" v-model="visible">
+                      <div slot="footer">
+                        <Button type="primary" :size="'large'" @click="closeImgView">确定</Button>
+                      </div>
                       <img :src="uploadList[0].url" v-if="visible" style="width: 100%">
                     </Modal>
                   </i-form-item>
@@ -101,8 +103,17 @@ export default {
       this.visible = true
     },
     handleRemove (file) {
-      this.uploadList.splice(this.uploadList.indexOf(file), 1)
-      this.solution.imgUrl = ''
+      this.$Modal.confirm({
+        title: '提示',
+        content: '<p style="font-size: 14px">此操作将会删除该图片，是否继续？</p>',
+        closable: true,
+        onOk: () => {
+          this.uploadList.splice(this.uploadList.indexOf(file), 1)
+          this.solution.imgUrl = ''
+        },
+        onCancel: () => {
+        }
+      })
     },
     handleSuccess (res, file) {
       if (res.code === 200) {
@@ -111,6 +122,12 @@ export default {
         this.solution.imgUrl = res.data.path
         this.uploadList.push(file)
         this.$Message.success({
+          content: res.msg,
+          duration: 5,
+          closable: true
+        })
+      } else {
+        this.$Message.error({
           content: res.msg,
           duration: 5,
           closable: true
@@ -166,6 +183,10 @@ export default {
           return false
         }
       })
+    },
+    closeImgView () {
+      this.visible = false
+      this.$refs.upload.value = null
     }
   },
   mounted () {
